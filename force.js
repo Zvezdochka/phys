@@ -5,7 +5,6 @@ var Force = function(phys, body1, body2)
     this.body2 = body2;
 };
 
-
 Force.prototype.getVector = function(body1, body2)
 {
     var r = body1.getDistanceToBody(body2);
@@ -20,7 +19,7 @@ Force.prototype.getVector = function(body1, body2)
     var x2 = body2.getPos().x;
     var y2 = body2.getPos().y;
 
-    var x = (x2 - x1) * r / forceMod + x1;  // (x-x1) / (x2-x1) = r / forceMod
+    var x = (x2 - x1) * forceMod / r + x1;  // (x-x1) / (x2-x1) = forceMod / r 
     var y = (x - x1) * (y2 - y1) / (x2 - x1) + y1; // dx/dy = (x-x1) / (y-y1) = (x2-x1) / (y2-y1)
 
     return this.phys.createVector(x, y);
@@ -39,7 +38,6 @@ Force.prototype.apply = function(body)
     }
 
     var forceVector = this.getVector(b1, b2);
-    
-
-
+    body.addForceVector(forceVector);
+console.info(forceVector);
 }

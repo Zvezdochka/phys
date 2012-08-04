@@ -33,3 +33,18 @@ Phys.prototype.unregisterBody = function(body)
     var idx = this.bodies.indexOf(body);
     this.bodies.splice(idx, 1);
 }
+
+Phys.prototype.step = function()
+{
+    this.bodies.forEach(function(body)
+    {
+        body.resetForceVectors();
+        body.iterateForces(function(force)
+        {
+            force.apply(body);
+        });
+        
+        var accelerationVector = body.getAccelerationVector();
+        body.moveBy(accelerationVector);
+    });
+}
