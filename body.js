@@ -30,6 +30,11 @@ Body.prototype.getDistanceTo = function(target)
     return Math.sqrt(dx * dx + dy * dy);
 }
 
+Body.prototype.attachForce = function(force)
+{
+    this.forces.push(force);
+}
+
 Body.prototype.iterateForces = function(handler)
 {
     this.forces.forEach(handler);

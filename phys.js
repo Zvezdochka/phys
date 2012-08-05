@@ -13,8 +13,8 @@ Phys.prototype.createVector = function(x, y)
     return new Vector(x, y);
 }
 
-Phys.prototype.createBody = function(x, y, mass)
-{
+Phys.prototype.createBody = function(mass, x, y)
+{ 
     return new Body(this, mass, this.createPoint(x, y));
 }
 

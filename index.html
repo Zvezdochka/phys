@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <script type="text/javascript" src="http://mbostock.github.com/d3/d3.v2.js?2.9.1"></script>
+
+    <script type='text/javascript' src='phys.js'></script>
+    <script type='text/javascript' src='body.js'></script>
+    <script type='text/javascript' src='force.js'></script>    
+    <script type='text/javascript' src='vector.js'></script>    
+    <script type='text/javascript' src='point.js'></script>    
+    
+    <style>
+        #canvas
+        {
+            border: 1px solid #dedede;
+            width: 1000px;
+            height: 700px;
+        }
+
+        .body
+        {
+            fill: #ffffff;
+            stroke: #000000;
+        }
+    </style>
+    <script>
+        function init()
+        {
+            var phys = new Phys();        
+            var bodies = [phys.createBody(20, 200, 200),
+                          phys.createBody(60, 500, 500)];
+
+            var force = phys.createForce(bodies[0], bodies[1]);
+            bodies[0].attachForce(force);
+            bodies[1].attachForce(force);
+
+            phys.registerBody(bodies[0]);
+            phys.registerBody(bodies[1]);
+
+            d3.select('#makeStep').on('click', function() { phys.step(); });
+
+            var wrapper = d3.select('#canvas');
+            var canvas = wrapper.append('svg');
+            canvas = canvas.append('g').attr('transform', 'translate(0, '+ wrapper.node().clientHeight +'),'+ 
+                                                          'scale(1, -1)');
+
+            canvas.selectAll('.circle').data(bodies).enter().append('circle')
+                .attr('class', 'body')
+                .attr('cx', function(d) { return d.getPos().x; })
+                .attr('cy', function(d) { return d.getPos().y; })
+                .attr('r', function(d) { return d.getMass(); });
+        }
+        window.addEventListener('load', init, false);
+    </script>
+</head>
+
+<body>
+    <button id='makeStep'>step</button>
+    <div id='canvas'></div>
+</body>
+</html>
