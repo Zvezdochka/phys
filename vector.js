@@ -10,10 +10,24 @@ Vector.prototype.add = function(vector)
     this.y += vector.y;
 }
 
+Vector.prototype.sub = function(vector)
+{
+    this.x -= vector.x;
+    this.y -= vector.y;
+    return this;
+}
+
 Vector.prototype.div = function(number)
 {
     this.x /= number;
     this.y /= number;
+    return this;    
+}
+
+Vector.prototype.mult = function(number)
+{
+    this.x *= number;
+    this.y *= number;
     return this;    
 }
 

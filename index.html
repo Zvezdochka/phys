@@ -39,6 +39,10 @@
             phys.registerBody(bodies[1]);
 
             d3.select('#makeStep').on('click', function() { phys.step(); });
+            d3.select('#makeRun').on('click', function() 
+            { 
+                window.setInterval(function() { phys.step(); }, 100); 
+            });
 
             var wrapper = d3.select('#canvas');
             var canvas = wrapper.append('svg');
@@ -49,7 +53,17 @@
                 .attr('class', 'body')
                 .attr('cx', function(d) { return d.getPos().x; })
                 .attr('cy', function(d) { return d.getPos().y; })
-                .attr('r', function(d) { return d.getMass(); });
+                .attr('r', function(d) { return d.getMass(); })
+                .each(function(body)
+                {
+                    var bodyNode = d3.select(this);
+                    body.onMoveBy(function(movement)
+                    {
+                        bodyNode
+                            .attr('cx', body.getPos().x)
+                            .attr('cy', body.getPos().y);
+                    })
+                });
         }
         window.addEventListener('load', init, false);
     </script>
@@ -57,6 +71,7 @@
 
 <body>
     <button id='makeStep'>step</button>
+    <button id='makeRun'>run</button>
     <div id='canvas'></div>
 </body>
 </html>

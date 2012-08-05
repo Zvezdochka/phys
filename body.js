@@ -5,6 +5,7 @@ var Body = function(phys, mass, pos)
     this.pos = pos;
     this.forces = [];
     this.compoundVector = phys.createVector(0, 0);
+    this.callbacks = {'onMoveBy': null};
 }
 
 Body.prototype.getMass = function()
@@ -17,10 +18,16 @@ Body.prototype.getPos = function()
     return this.pos;
 }
 
+Body.prototype.onMoveBy = function(callback)
+{
+    this.callbacks.onMoveBy = callback;
+}
+
 Body.prototype.moveBy = function(vector)
 {
     this.pos.x += vector.x;
     this.pos.y += vector.y;
+    this.callbacks.onMoveBy(vector);
 }
 
 Body.prototype.getDistanceTo = function(target)
@@ -52,5 +59,5 @@ Body.prototype.resetForceVectors = function()
 
 Body.prototype.getAccelerationVector = function()
 {
-    this.compoundVector.clone().div(this.mass);
+    return this.compoundVector.clone().div(this.mass);
 }
