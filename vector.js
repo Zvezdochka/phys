@@ -8,6 +8,7 @@ Vector.prototype.add = function(vector)
 {
     this.x += vector.x;
     this.y += vector.y;
+    return this;    
 }
 
 Vector.prototype.sub = function(vector)

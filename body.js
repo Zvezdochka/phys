@@ -6,6 +6,7 @@ var Body = function(phys, mass, pos)
     this.forces = [];
     this.compoundVector = phys.createVector(0, 0);
     this.callbacks = {'onMoveBy': null};
+    this.extantVelocityVector = phys.createVector(0, 0);
 }
 
 Body.prototype.getMass = function()
@@ -57,7 +58,15 @@ Body.prototype.resetForceVectors = function()
     this.compoundVector = this.phys.createVector(0, 0);
 }
 
-Body.prototype.getAccelerationVector = function()
+Body.prototype.getVelocityVector = function()
 {
-    return this.compoundVector.clone().div(this.mass);
+    // instantaneous velocity = extant velocity * reductor + obtained velocity
+    var obtainedVelocityVector = this.compoundVector.clone().div(this.mass); // obtained velocity = accelerationVector * step time = accelerationVector
+    var instantVelocity = this.extantVelocityVector
+                            .mult(reductor);
+console.info('aftermult',instantVelocity)                            ;                            
+                            instantVelocity = instantVelocity.add(obtainedVelocityVector);
+console.info('afteradd',instantVelocity)                            ;
+    this.extantVelocityVector = instantVelocity;
+    return instantVelocity;
 }

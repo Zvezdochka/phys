@@ -25,9 +25,12 @@
         }
     </style>
     <script>
+        var reductor = 0.5;
+        
         function init()
         {
-            var phys = new Phys();        
+            var phys = new Phys();    
+
             var bodies = [phys.createBody(20, 200, 200),
                           phys.createBody(60, 500, 500)];
 

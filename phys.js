@@ -44,8 +44,8 @@ Phys.prototype.step = function()
             force.apply(body);
         });
         
-        var accelerationVector = body.getAccelerationVector();
-        body.moveBy(accelerationVector);
+        var velocityVector = body.getVelocityVector();
+        body.moveBy(velocityVector);
         
     });
 }
