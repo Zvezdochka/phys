@@ -4,11 +4,12 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <script type="text/javascript" src="http://mbostock.github.com/d3/d3.v2.js?2.9.1"></script>
 
-    <script type='text/javascript' src='phys.js'></script>
-    <script type='text/javascript' src='body.js'></script>
-    <script type='text/javascript' src='force.js'></script>    
-    <script type='text/javascript' src='vector.js'></script>    
-    <script type='text/javascript' src='point.js'></script>    
+    <script type='text/javascript' src='phys/phys.js'></script>
+    <script type='text/javascript' src='phys/body.js'></script>
+    <script type='text/javascript' src='phys/behaviour/attraction.js'></script>    
+    <script type='text/javascript' src='phys/behaviour/collision.js'></script>    
+    <script type='text/javascript' src='phys/math/vector.js'></script>    
+    <script type='text/javascript' src='phys/math/point.js'></script>    
     
     <style>
         #canvas
@@ -34,9 +35,13 @@
             var bodies = [phys.createBody(20, 200, 200),
                           phys.createBody(60, 500, 500)];
 
-            var force = phys.createForce(bodies[0], bodies[1]);
-            bodies[0].attachForce(force);
-            bodies[1].attachForce(force);
+            var force = phys.createAttractionBehaviour(bodies[0], bodies[1]);
+            bodies[0].attachBehaviour(force);
+            bodies[1].attachBehaviour(force);
+
+            var collision = phys.createCollisionBehaviour(bodies[0], bodies[1]);
+            bodies[0].attachBehaviour(collision);
+            bodies[1].attachBehaviour(collision);
 
             phys.registerBody(bodies[0]);
             phys.registerBody(bodies[1]);
@@ -59,6 +64,7 @@
                 .attr('r', function(d) { return d.getMass(); })
                 .each(function(body)
                 {
+                    body.bodyR = this.getBBox().width / 2;
                     var bodyNode = d3.select(this);
                     body.onMoveBy(function(movement)
                     {

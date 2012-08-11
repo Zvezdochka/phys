@@ -18,9 +18,14 @@ Phys.prototype.createBody = function(mass, x, y)
     return new Body(this, mass, this.createPoint(x, y));
 }
 
-Phys.prototype.createForce = function(body1, body2)
+Phys.prototype.createAttractionBehaviour = function(body1, body2)
 {
-    return new Force(this, body1, body2);
+    return new AttractionBehaviour(this, body1, body2);
+}
+
+Phys.prototype.createCollisionBehaviour = function(body1, body2)
+{
+    return new CollisionBehaviour(this, body1, body2);
 }
 
 Phys.prototype.registerBody = function(body)
@@ -36,16 +41,25 @@ Phys.prototype.unregisterBody = function(body)
 
 Phys.prototype.step = function()
 {
+    // motion
     this.bodies.forEach(function(body)
     {
         body.resetForceVectors();
-        body.iterateForces(function(force)
+        body.iterateBehaviours(function(behaviour)
         {
-            force.apply(body);
+            behaviour.apply(body);
         });
         
         var velocityVector = body.getVelocityVector();
         body.moveBy(velocityVector);
-        
     });
+
+    // motion post processing (i.e. detecting collisions)
+    this.bodies.forEach(function(body)
+    {
+        body.iterateBehaviours(function(behaviour)
+        {
+            behaviour.postApply(body);
+        });
+    });    
 }

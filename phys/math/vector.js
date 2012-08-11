@@ -32,6 +32,11 @@ Vector.prototype.mult = function(number)
     return this;    
 }
 
+Vector.prototype.dotProduct = function(vector)
+{
+    return vector.x * this.x + vector.y * this.y;    
+}
+
 Vector.prototype.clone = function()
 {
     return new this.constructor(this.x, this.y);

@@ -1,11 +1,11 @@
-var Force = function(phys, body1, body2) 
+var AttractionBehaviour = function(phys, body1, body2) 
 {
     this.phys = phys;
     this.body1 = body1;
     this.body2 = body2;
 };
 
-Force.prototype.getVector = function(body1, body2)
+AttractionBehaviour.prototype.getVector = function(body1, body2)
 {
     var r = body1.getDistanceTo(body2);
     var m1 = body1.getMass();
@@ -30,7 +30,11 @@ Force.prototype.getVector = function(body1, body2)
     return vector2;
 }
 
-Force.prototype.apply = function(body)
+AttractionBehaviour.prototype.preApply = function(body)
+{
+}
+
+AttractionBehaviour.prototype.apply = function(body)
 {
     if (body == this.body1) 
     {
@@ -45,4 +49,8 @@ Force.prototype.apply = function(body)
     var forceVector = this.getVector(b1, b2);
     body.addForceVector(forceVector);
 console.info(forceVector);
+}
+
+AttractionBehaviour.prototype.postApply = function(body)
+{
 }
