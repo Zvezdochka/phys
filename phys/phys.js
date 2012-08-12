@@ -41,6 +41,14 @@ Phys.prototype.unregisterBody = function(body)
 
 Phys.prototype.step = function()
 {
+    this.bodies.forEach(function(body)
+    {
+        body.iterateBehaviours(function(behaviour)
+        {
+            behaviour.preApply(body);
+        });
+    }); 
+
     // motion
     this.bodies.forEach(function(body)
     {

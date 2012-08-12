@@ -42,4 +42,8 @@ Vector.prototype.clone = function()
     return new this.constructor(this.x, this.y);
 }
 
+Vector.prototype.toString = function()
+{
+    return 'x: ' + this.x + ', y: ' + this.y;
+}
 

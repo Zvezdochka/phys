@@ -26,25 +26,43 @@
         }
     </style>
     <script>
-        var reductor = 0.5;
+        var reductor = 0.95;
         
         function init()
         {
             var phys = new Phys();    
 
             var bodies = [phys.createBody(20, 200, 200),
-                          phys.createBody(60, 500, 500)];
+                          phys.createBody(100, 500, 500),
+                          phys.createBody(50, 150, 400)];
 
-            var force = phys.createAttractionBehaviour(bodies[0], bodies[1]);
-            bodies[0].attachBehaviour(force);
-            bodies[1].attachBehaviour(force);
+            //bodies[0].setExtantVelocityVector(phys.createVector(25, 5));
 
-            var collision = phys.createCollisionBehaviour(bodies[0], bodies[1]);
-            bodies[0].attachBehaviour(collision);
-            bodies[1].attachBehaviour(collision);
+            var attract = function(b1, b2)
+            {
+                var force = phys.createAttractionBehaviour(b1, b2);
+                b1.attachBehaviour(force);
+                b2.attachBehaviour(force);
+            }
+            
+            var collide = function(b1, b2)
+            {
+                var collision = phys.createCollisionBehaviour(b1, b2);
+                b1.attachBehaviour(collision);
+                b2.attachBehaviour(collision);
+            }
+
+            attract(bodies[0], bodies[1]);
+            attract(bodies[1], bodies[2]);
+            attract(bodies[2], bodies[0]);
+
+            collide(bodies[0], bodies[1]);
+            collide(bodies[1], bodies[2]);
+            collide(bodies[2], bodies[0]);
 
             phys.registerBody(bodies[0]);
             phys.registerBody(bodies[1]);
+            phys.registerBody(bodies[2]);
 
             d3.select('#makeStep').on('click', function() { phys.step(); });
             d3.select('#makeRun').on('click', function() 
