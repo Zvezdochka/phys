@@ -33,8 +33,8 @@
             var phys = new Phys();    
 
             var bodies = [phys.createBody(20, 200, 200),
-                          phys.createBody(100, 500, 500),
-                          phys.createBody(50, 150, 400)];
+                          phys.createBody(100, 500, 500)/*,
+                          phys.createBody(50, 150, 400)*/];
 
             //bodies[0].setExtantVelocityVector(phys.createVector(25, 5));
 
@@ -53,16 +53,16 @@
             }
 
             attract(bodies[0], bodies[1]);
-            attract(bodies[1], bodies[2]);
+/*            attract(bodies[1], bodies[2]);
             attract(bodies[2], bodies[0]);
-
+*/
             collide(bodies[0], bodies[1]);
-            collide(bodies[1], bodies[2]);
+/*            collide(bodies[1], bodies[2]);
             collide(bodies[2], bodies[0]);
-
+*/
             phys.registerBody(bodies[0]);
             phys.registerBody(bodies[1]);
-            phys.registerBody(bodies[2]);
+/*            phys.registerBody(bodies[2]);*/
 
             d3.select('#makeStep').on('click', function() { phys.step(); });
             d3.select('#makeRun').on('click', function() 
@@ -72,12 +72,14 @@
 
             var wrapper = d3.select('#canvas');
             var canvas = wrapper.append('svg');
+            canvas.attr('width', wrapper.node().clientWidth)
+                  .attr('height', wrapper.node().clientHeight);
             canvas = canvas.append('g').attr('transform', 'translate(0, '+ wrapper.node().clientHeight +'),'+ 
                                                           'scale(1, -1)');
 
             canvas.selectAll('.circle').data(bodies).enter().append('circle')
                 .attr('class', 'body')
-                .attr('cx', function(d) { return d.getPos().x; })
+                .attr('cx', function(d) { return d.getPos().x;  })
                 .attr('cy', function(d) { return d.getPos().y; })
                 .attr('r', function(d) { return d.getMass(); })
                 .each(function(body)

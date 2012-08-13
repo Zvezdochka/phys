@@ -11,12 +11,12 @@ AttractionBehaviour.prototype.getVector = function(body1, body2)
     var m1 = body1.getMass();
     var m2 = body2.getMass();
 
-    if (r <= body1.getRadius() + body2.getRadius()) 
+    if (r <= body1.getRadius() + body2.getRadius() +5) 
     {
         return this.phys.createVector(0, 0);
     }
 
-    var G = 1500;
+    var G = 500;
     var forceMod = G * (m1 * m2) / (r * r);
 
     var pos1 = body1.getPos();

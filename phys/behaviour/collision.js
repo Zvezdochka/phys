@@ -44,17 +44,8 @@ CollisionBehaviour.prototype.postApply = function(body)
     var m1 = this.body1.getMass();
     var m2 = this.body2.getMass();
 
-    //correction location
-    var overlap = r1 + r2 - r;
-    var rollback1 = overlap * m1 / (m1 + m2);
-    var rollback2 = overlap * m2 / (m1 + m2);
-    console.info('rollback1', rollback1);
-    console.info('rollback2', rollback2);
-    this.body1.moveBy(deltaB2B1.clone().mult(rollback1 / r));
-    this.body2.moveBy(deltaB2B1.clone().mult(-rollback2 / r));
-
     // get unit vectors
-    var unitVectorX = deltaB2B1.div(r);
+    var unitVectorX = deltaB2B1.clone().div(r);
     var unitVectorY = this.phys.createVector(-unitVectorX.y, unitVectorX.x);
     
     //Body 2
@@ -89,6 +80,34 @@ CollisionBehaviour.prototype.postApply = function(body)
     var newVelocity1VectorX = unitVectorX.clone().mult(newVelocity1X);
     var velocity1VectorY = unitVectorY.clone().mult(velocity1Y);
     var newVelocity1Vector = newVelocity1VectorX.clone().add(velocity1VectorY);
+
+    //correction location
+    var overlap = r1 + r2 - r;
+    var veloSum = 0;
+    if (velocity1X < 0) 
+    {
+        velocity1X = Math.abs(velocity1X);
+        veloSum += velocity1X;
+    } else 
+    {
+        velocity1X = 0;
+    };
+
+    if (velocity2X > 0) 
+    {
+        velocity2X = Math.abs(velocity2X);
+        veloSum += velocity2X;
+    } else 
+    {
+        velocity2X = 0;
+    };
+
+    var rollback1 = overlap * velocity1X / veloSum;
+    var rollback2 = overlap * velocity2X / veloSum;
+    console.info('rollback1', rollback1);
+    console.info('rollback2', rollback2);
+    this.body1.moveBy(deltaB2B1.clone().mult(rollback1 / r));
+    this.body2.moveBy(deltaB2B1.clone().mult(-rollback2 / r));
 
     this.body1.setExtantVelocityVector(newVelocity1Vector);
 
