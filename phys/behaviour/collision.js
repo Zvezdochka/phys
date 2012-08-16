@@ -102,12 +102,16 @@ CollisionBehaviour.prototype.postApply = function(body)
         velocity2X = 0;
     };
 
-    var rollback1 = overlap * velocity1X / veloSum;
-    var rollback2 = overlap * velocity2X / veloSum;
-    console.info('rollback1', rollback1);
-    console.info('rollback2', rollback2);
-    this.body1.moveBy(deltaB2B1.clone().mult(rollback1 / r));
-    this.body2.moveBy(deltaB2B1.clone().mult(-rollback2 / r));
+    console.info('veloSum', veloSum);
+    if (veloSum > 0)
+    {
+        var rollback1 = overlap * velocity1X / veloSum;
+        var rollback2 = overlap * velocity2X / veloSum;
+        console.info('rollback1', rollback1);
+        console.info('rollback2', rollback2);
+        this.body1.moveBy(deltaB2B1.clone().mult(rollback1 / r));
+        this.body2.moveBy(deltaB2B1.clone().mult(-rollback2 / r));
+    }
 
     this.body1.setExtantVelocityVector(newVelocity1Vector);
 

@@ -28,6 +28,11 @@ Phys.prototype.createCollisionBehaviour = function(body1, body2)
     return new CollisionBehaviour(this, body1, body2);
 }
 
+Phys.prototype.createBoundBoxBehaviour = function(x1, y1, x2, y2)
+{
+    return new BoundBoxBehaviour(this, x1, y1, x2, y2);
+}
+
 Phys.prototype.registerBody = function(body)
 {
     this.bodies.push(body);

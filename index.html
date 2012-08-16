@@ -8,6 +8,7 @@
     <script type='text/javascript' src='phys/body.js'></script>
     <script type='text/javascript' src='phys/behaviour/attraction.js'></script>    
     <script type='text/javascript' src='phys/behaviour/collision.js'></script>    
+    <script type='text/javascript' src='phys/behaviour/boundbox.js'></script>    
     <script type='text/javascript' src='phys/math/vector.js'></script>    
     <script type='text/javascript' src='phys/math/point.js'></script>    
     
@@ -26,17 +27,17 @@
         }
     </style>
     <script>
-        var reductor = 0.95;
+        var reductor = 0.98;
         
         function init()
         {
             var phys = new Phys();    
 
             var bodies = [phys.createBody(20, 200, 200),
-                          phys.createBody(100, 500, 500)/*,
-                          phys.createBody(50, 150, 400)*/];
+                          phys.createBody(100, 500, 500),
+                          phys.createBody(50, 150, 400)];
 
-            //bodies[0].setExtantVelocityVector(phys.createVector(25, 5));
+            bodies[0].setExtantVelocityVector(phys.createVector(25, 5));
 
             var attract = function(b1, b2)
             {
@@ -52,17 +53,23 @@
                 b2.attachBehaviour(collision);
             }
 
+            var wrapper = d3.select('#canvas');
+            var boundBox = phys.createBoundBoxBehaviour(0, wrapper.node().clientHeight, wrapper.node().clientWidth, 0);
+            bodies[0].attachBehaviour(boundBox);
+            bodies[1].attachBehaviour(boundBox);
+            bodies[2].attachBehaviour(boundBox);
+
             attract(bodies[0], bodies[1]);
-/*            attract(bodies[1], bodies[2]);
+            attract(bodies[1], bodies[2]);
             attract(bodies[2], bodies[0]);
-*/
+
             collide(bodies[0], bodies[1]);
-/*            collide(bodies[1], bodies[2]);
+            collide(bodies[1], bodies[2]);
             collide(bodies[2], bodies[0]);
-*/
+
             phys.registerBody(bodies[0]);
             phys.registerBody(bodies[1]);
-/*            phys.registerBody(bodies[2]);*/
+            phys.registerBody(bodies[2]);
 
             d3.select('#makeStep').on('click', function() { phys.step(); });
             d3.select('#makeRun').on('click', function() 
@@ -70,7 +77,6 @@
                 window.setInterval(function() { phys.step(); }, 100); 
             });
 
-            var wrapper = d3.select('#canvas');
             var canvas = wrapper.append('svg');
             canvas.attr('width', wrapper.node().clientWidth)
                   .attr('height', wrapper.node().clientHeight);

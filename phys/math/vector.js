@@ -37,6 +37,13 @@ Vector.prototype.dotProduct = function(vector)
     return vector.x * this.x + vector.y * this.y;    
 }
 
+Vector.prototype.scale = function(scaleX, scaleY)
+{
+    this.x *= scaleX;
+    this.y *= scaleY;
+    return this;    
+}
+
 Vector.prototype.clone = function()
 {
     return new this.constructor(this.x, this.y);
@@ -46,4 +53,3 @@ Vector.prototype.toString = function()
 {
     return 'x: ' + this.x + ', y: ' + this.y;
 }
-
