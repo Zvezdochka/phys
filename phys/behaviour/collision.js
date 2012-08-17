@@ -102,7 +102,7 @@ CollisionBehaviour.prototype.postApply = function(body)
         velocity2X = 0;
     };
 
-    console.info('veloSum', veloSum);
+    //console.info('veloSum', veloSum);
     if (veloSum > 0)
     {
         var rollback1 = overlap * velocity1X / veloSum;

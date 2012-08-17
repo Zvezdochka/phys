@@ -15,7 +15,7 @@ Phys.prototype.createVector = function(x, y)
 
 Phys.prototype.createBody = function(mass, x, y)
 { 
-    return new Body(this, mass, this.createPoint(x, y));
+    return new Body(this, mass, this.createVector(x, y));
 }
 
 Phys.prototype.createAttractionBehaviour = function(body1, body2)
