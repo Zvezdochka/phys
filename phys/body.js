@@ -3,6 +3,7 @@ var Body = function(phys, mass, pos)
     this.phys = phys;
     this.mass = mass;
     this.pos = pos;
+    this.prevPos = null;
     this.behaviours = [];
     this.compoundVector = phys.createVector(0, 0);
     this.callbacks = {'onMoveBy': null};
@@ -24,6 +25,11 @@ Body.prototype.getPos = function()
     return this.pos;
 }
 
+Body.prototype.getPrevPos = function()
+{
+    return this.prevPos;
+}
+
 Body.prototype.onMoveBy = function(callback)
 {
     this.callbacks.onMoveBy = callback;
@@ -31,6 +37,7 @@ Body.prototype.onMoveBy = function(callback)
 
 Body.prototype.moveBy = function(vector)
 {
+    this.prevPos = this.pos.clone();
     this.pos.x += vector.x;
     this.pos.y += vector.y;
     this.callbacks.onMoveBy(vector);
@@ -84,3 +91,4 @@ Body.prototype.setExtantVelocityVector = function(vector)
 {
     this.extantVelocityVector = vector;
 }
+

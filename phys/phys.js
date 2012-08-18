@@ -61,6 +61,7 @@ Phys.prototype.step = function()
         body.iterateBehaviours(function(behaviour)
         {
             behaviour.apply(body);
+
         });
         
         var velocityVector = body.getVelocityVector();
