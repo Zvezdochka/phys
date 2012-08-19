@@ -11,6 +11,7 @@
     <script type='text/javascript' src='phys/behaviour/boundbox.js'></script>    
     <script type='text/javascript' src='phys/math/vector.js'></script>    
     <script type='text/javascript' src='phys/math/point.js'></script>    
+    <script type='text/javascript' src='images.js'></script>    
     
     <style>
         #canvas
@@ -27,17 +28,20 @@
         }
     </style>
     <script>
-        var reductor = 0.98;
+        var reductor = 1;
         
         function init()
         {
             var phys = new Phys();    
 
-            var bodies = [phys.createBody(20, 200, 200),
-                          phys.createBody(100, 500, 500),
-                          phys.createBody(50, 150, 400)];
+            var cats = [phys.createBody(60, 200, 200),
+                         ];
 
-            bodies[0].setExtantVelocityVector(phys.createVector(25, 5));
+            var tapoks = [phys.createBody(30, 600, 100),
+                          phys.createBody(30, 500, 500),
+                          phys.createBody(30, 150, 400)];
+
+            tapoks[0].setExtantVelocityVector(phys.createVector(25, 5));
 
             var attract = function(b1, b2)
             {
@@ -55,21 +59,26 @@
 
             var wrapper = d3.select('#canvas');
             var boundBox = phys.createBoundBoxBehaviour(0, wrapper.node().clientHeight, wrapper.node().clientWidth, 0);
-            bodies[0].attachBehaviour(boundBox);
-            bodies[1].attachBehaviour(boundBox);
-            bodies[2].attachBehaviour(boundBox);
+            cats[0].attachBehaviour(boundBox);
+            tapoks[0].attachBehaviour(boundBox);
+            tapoks[1].attachBehaviour(boundBox);
+            tapoks[2].attachBehaviour(boundBox);
 
-            attract(bodies[0], bodies[1]);
-            attract(bodies[1], bodies[2]);
-            attract(bodies[2], bodies[0]);
+            attract(cats[0], tapoks[0]);
+            attract(cats[0], tapoks[1]);
+            attract(cats[0], tapoks[2]);
 
-            collide(bodies[0], bodies[1]);
-            collide(bodies[1], bodies[2]);
-            collide(bodies[2], bodies[0]);
+            collide(cats[0], tapoks[1]);
+            collide(cats[0], tapoks[2]);
+            collide(cats[0], tapoks[0]);
+            collide(tapoks[0], tapoks[1]);
+            collide(tapoks[1], tapoks[2]);
+            collide(tapoks[2], tapoks[0]);
 
-            phys.registerBody(bodies[0]);
-            phys.registerBody(bodies[1]);
-            phys.registerBody(bodies[2]);
+            phys.registerBody(cats[0]);
+            phys.registerBody(tapoks[0]);
+            phys.registerBody(tapoks[1]);
+            phys.registerBody(tapoks[2]);
 
             d3.select('#makeStep').on('click', function() { phys.step(); });
             d3.select('#makeRun').on('click', function() 
@@ -80,25 +89,59 @@
             var canvas = wrapper.append('svg');
             canvas.attr('width', wrapper.node().clientWidth)
                   .attr('height', wrapper.node().clientHeight);
+
+            var defs = canvas.append('defs');
+            defs.append('image')
+                .attr('id', 'crazy_cat')
+                .attr('xlink:href', getCatImageData())
+                .attr('width', 120)
+                .attr('height', 120)
+                .attr('transform', 'scale(1, -1)');
+
+            defs.append('image')
+                .attr('id', 'tapok')
+                .attr('xlink:href', getTapokImageData())
+                .attr('width', 60)
+                .attr('height', 60)
+                .attr('transform', 'scale(1, -1)');
+
             canvas = canvas.append('g').attr('transform', 'translate(0, '+ wrapper.node().clientHeight +'),'+ 
                                                           'scale(1, -1)');
 
-            canvas.selectAll('.circle').data(bodies).enter().append('circle')
-                .attr('class', 'body')
-                .attr('cx', function(d) { return d.getPos().x;  })
-                .attr('cy', function(d) { return d.getPos().y; })
-                .attr('r', function(d) { return d.getMass(); })
+            canvas.selectAll('.cat').data(cats).enter().append('use')
+                .attr('xlink:href', '#crazy_cat')
+                .attr('class', 'cat')
+                .attr('x', function(d) { return d.getPos().x-60;  })
+                .attr('y', function(d) { return d.getPos().y+60; })
+                /*.attr('r', function(d) { return d.getMass(); })*/
                 .each(function(body)
                 {
-                    body.bodyR = this.getBBox().width / 2;
                     var bodyNode = d3.select(this);
                     body.onMoveBy(function(movement)
                     {
                         bodyNode
-                            .attr('cx', body.getPos().x)
-                            .attr('cy', body.getPos().y);
+                            .attr('x', body.getPos().x-60)
+                            .attr('y', body.getPos().y+60);
                     })
                 });
+
+            canvas.selectAll('.tapok').data(tapoks).enter().append('use')
+                .attr('xlink:href', '#tapok')
+                .attr('class', 'tapok')
+                .attr('x', function(d) { return d.getPos().x-30;  })
+                .attr('y', function(d) { return d.getPos().y+30; })
+                /*.attr('r', function(d) { return d.getMass(); })*/
+                .each(function(body)
+                {
+                    var bodyNode = d3.select(this);
+                    body.onMoveBy(function(movement)
+                    {
+                        bodyNode
+                            .attr('x', body.getPos().x-30)
+                            .attr('y', body.getPos().y+30);
+                    })
+                });
+
         }
         window.addEventListener('load', init, false);
     </script>
