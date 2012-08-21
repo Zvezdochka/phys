@@ -15,7 +15,7 @@ CollisionBehaviour.prototype.apply = function(body)
 {
 }
 
-CollisionBehaviour.prototype.postApply = function(body)
+CollisionBehaviour.prototype.postApply = function(body, flags)
 {
     if (this.processed) 
     { // if collision for pair of bodies was made
@@ -102,15 +102,19 @@ CollisionBehaviour.prototype.postApply = function(body)
         velocity2X = 0;
     };
 
-    //console.info('veloSum', veloSum);
+    if (overlap !=0) 
+    {
+        flags.rollback_was = true;
+    }
+
     if (veloSum > 0)
     {
         var rollback1 = overlap * velocity1X / veloSum;
         var rollback2 = overlap * velocity2X / veloSum;
         console.info('rollback1', rollback1);
         console.info('rollback2', rollback2);
-        this.body1.moveBy(deltaB2B1.clone().mult(rollback1 / r));
-        this.body2.moveBy(deltaB2B1.clone().mult(-rollback2 / r));
+        this.body1.moveBy(deltaB2B1.clone().mult(rollback1 / r), false);
+        this.body2.moveBy(deltaB2B1.clone().mult(-rollback2 / r), false);
     }
 
     this.body1.setExtantVelocityVector(newVelocity1Vector);

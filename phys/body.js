@@ -8,6 +8,7 @@ var Body = function(phys, mass, pos)
     this.compoundVector = phys.createVector(0, 0);
     this.callbacks = {'onMoveBy': null};
     this.extantVelocityVector = phys.createVector(0, 0);
+    this.serviceStorage = {};
 }
 
 Body.prototype.getMass = function()
@@ -35,9 +36,13 @@ Body.prototype.onMoveBy = function(callback)
     this.callbacks.onMoveBy = callback;
 }
 
-Body.prototype.moveBy = function(vector)
+Body.prototype.moveBy = function(vector, updatePrevPos)
 {
-    this.prevPos = this.pos.clone();
+    updatePrevPos = updatePrevPos == undefined ? true : updatePrevPos;
+    if (updatePrevPos)
+    {
+        this.prevPos = this.pos.clone();
+    }
     this.pos.x += vector.x;
     this.pos.y += vector.y;
     this.callbacks.onMoveBy(vector);
@@ -91,4 +96,3 @@ Body.prototype.setExtantVelocityVector = function(vector)
 {
     this.extantVelocityVector = vector;
 }
-

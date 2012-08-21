@@ -68,12 +68,17 @@ Phys.prototype.step = function()
         body.moveBy(velocityVector);
     });
 
+    var flags = {'rollback_was': false};
     // motion post processing (i.e. detecting collisions)
-    this.bodies.forEach(function(body)
+    do
     {
-        body.iterateBehaviours(function(behaviour)
+        flags.rollback_was = false;
+        this.bodies.forEach(function(body)
         {
-            behaviour.postApply(body);
-        });
-    });    
+            body.iterateBehaviours(function(behaviour)
+            {
+                behaviour.postApply(body, flags);
+            });
+        });    
+    } while (flags.rollback_was);
 }
