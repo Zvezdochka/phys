@@ -1,6 +1,7 @@
 var Phys = function()
 {
     this.bodies = [];
+    this.stepNumber = 0;
 }
 
 Phys.prototype.createPoint = function(x, y)
@@ -46,6 +47,8 @@ Phys.prototype.unregisterBody = function(body)
 
 Phys.prototype.step = function()
 {
+    this.stepNumber++; 
+
     this.bodies.forEach(function(body)
     {
         body.iterateBehaviours(function(behaviour)
@@ -81,4 +84,9 @@ Phys.prototype.step = function()
             });
         });    
     } while (flags.rollback_was);
+}
+
+Phys.prototype.getStepNumber = function()
+{
+    return this.stepNumber;
 }

@@ -13,20 +13,7 @@
     <script type='text/javascript' src='phys/math/point.js'></script>    
     <script type='text/javascript' src='images.js'></script>    
     
-    <style>
-        #canvas
-        {
-            border: 1px solid #dedede;
-            width: 1000px;
-            height: 700px;
-        }
-
-        .body
-        {
-            fill: #ffffff;
-            stroke: #000000;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="style1.css">
     <script>
         var reductor = 1;
         
@@ -80,11 +67,28 @@
             phys.registerBody(tapoks[1]);
             phys.registerBody(tapoks[2]);
 
-            d3.select('#makeStep').on('click', function() { phys.step(); });
+            d3.select('#makeStep').on('click', function() 
+            { 
+                phys.step(); 
+                var stepNumber = phys.getStepNumber();
+                d3.select('#stepNumber').text('Step number: '+ stepNumber);
+            });
+
+            var stepInterval = null;
             d3.select('#makeRun').on('click', function() 
             { 
-                window.setInterval(function() { phys.step(); }, 100); 
+                stepInterval = window.setInterval(function() 
+                { 
+                    phys.step(); 
+                    var stepNumber = phys.getStepNumber();
+                    d3.select('#stepNumber').text('Step number: '+ phys.getStepNumber());
+                }, 100); 
             });
+
+            d3.select('#makePause').on('click', function()
+            {
+                clearInterval(stepInterval);
+            })
 
             var canvas = wrapper.append('svg');
             canvas.attr('width', wrapper.node().clientWidth)
@@ -148,8 +152,14 @@
 </head>
 
 <body>
-    <button id='makeStep'>step</button>
-    <button id='makeRun'>run</button>
     <div id='canvas'></div>
+    <div id='panel'>
+        <button id='makeStep'>step forward</button>
+        <button id='makeStepBack' disabled="disabled">step back</button>
+        <button id='makeRun'>run</button>
+        <button id='makePause'>pause</button>
+        <br>
+        <div id='stepNumber'>Step number: 0</div>
+    </div>
 </body>
 </html>

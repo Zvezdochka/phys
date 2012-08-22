@@ -1,0 +1,23 @@
+#canvas
+{
+    border: 1px solid #dedede;
+    width : 1000px;
+    height: 700px;
+    float : left;
+}
+
+.body
+{
+    fill: #ffffff;
+    stroke: #000000;
+}
+
+#panel
+{
+    margin-left : 700px;
+}
+
+#makeStepBack[disabled="disabled"], #makeStepBack[disabled]
+{
+    background-color: #ccc;
+}
