@@ -81,6 +81,8 @@
                 { 
                     phys.step(); 
                     var stepNumber = phys.getStepNumber();
+                    if (stepNumber == 1115) 
+                        {return true;}
                     d3.select('#stepNumber').text('Step number: '+ phys.getStepNumber());
                 }, 100); 
             });

@@ -35,7 +35,7 @@ BoundBoxBehaviour.prototype.postApply = function(body, flags)
         /* d = Ax+By+C / sqrt(A^2 + B^2)*/
         var d = (y0 - y1) * point.x + (x1 - x0) * point.y + (x0 * y1 - y0 * x1);
         d /= Math.sqrt(Math.pow((y0 - y1), 2) + Math.pow((x1 - x0), 2)); 
-        return Math.abs(d);
+        return d;
     }
 
     function getLinesIntersectPoint(point, velocityVector, linePoint1, linePoint2)
@@ -139,53 +139,72 @@ console.info('getLinesIntersectPoint', point.toString(), velocityVector.toString
     var d2 = pointToLineDistance(body.getPos(), this.bottomLeft, this.bottomRight);
     var d3 = pointToLineDistance(body.getPos(), this.bottomLeft, this.topLeft);
     var d4 = pointToLineDistance(body.getPos(), this.bottomRight, this.topRight);
+    var prevd1 = pointToLineDistance(body.getPrevPos(), this.topLeft, this.topRight);
+    var prevd2 = pointToLineDistance(body.getPrevPos(), this.bottomLeft, this.bottomRight);
+    var prevd3 = pointToLineDistance(body.getPrevPos(), this.bottomLeft, this.topLeft);
+    var prevd4 = pointToLineDistance(body.getPrevPos(), this.bottomRight, this.topRight);
 
-    if (d1 <= body.getRadius())
+    if ((Math.abs(d1) <= body.getRadius()) || (d1 * prevd1 < 0))
     {
         // collision was with top wall
         var velocityVector = info.processed ? info.originalVelocityVector : body.getExtantVelocityVector(); // first collision processing or not
         var interPoint = getLinesIntersectPoint(body.getPos(), velocityVector, this.topLeft, this.topRight);
-        rollback(d1, interPoint);
+        rollback(Math.abs(d1), interPoint);
 
         if (!info.processed)
         {
-            info.originalVelocityVector = velocityVector.clone();
+            if (info.originalVelocityVector == null)
+            {
+                info.originalVelocityVector = velocityVector.clone();
+            }
             velocityVector.scale(1, -1);
         }
-    } else if (d2 <= body.getRadius())
+    } 
+    if ((Math.abs(d2) <= body.getRadius()) || (d2 * prevd2 < 0))
     {
         // collision was with bottom wall
         var velocityVector = info.processed ? info.originalVelocityVector : body.getExtantVelocityVector(); // first collision processing or not
         var interPoint = getLinesIntersectPoint(body.getPos(), velocityVector, this.bottomLeft, this.bottomRight);
-        rollback(d2, interPoint);
+        rollback(Math.abs(d2), interPoint);
 
         if (!info.processed)
         {
-            info.originalVelocityVector = velocityVector.clone();
+            if (info.originalVelocityVector == null)
+            {
+                info.originalVelocityVector = velocityVector.clone();
+            }
             velocityVector.scale(1, -1);
         }
-    } else if (d3 <= body.getRadius())
+    } 
+    if ((Math.abs(d3) <= body.getRadius()) || (d3 * prevd3 < 0))
     {
         // collision was with left wall
         var velocityVector = info.processed ? info.originalVelocityVector : body.getExtantVelocityVector(); // first collision processing or not
         var interPoint = getLinesIntersectPoint(body.getPos(), velocityVector, this.bottomLeft, this.topLeft);
-        rollback(d3, interPoint);
+        rollback(Math.abs(d3), interPoint);
 
         if (!info.processed)
         {
-            info.originalVelocityVector = velocityVector.clone();
+            if (info.originalVelocityVector == null)
+            {
+                info.originalVelocityVector = velocityVector.clone();
+            }
             velocityVector.scale(-1, 1);
         }
-    } else if (d4 <= body.getRadius())
+    } 
+    if ((Math.abs(d4) <= body.getRadius()) || (d4 * prevd4 < 0))
     {
         // collision was with right wall
         var velocityVector = info.processed ? info.originalVelocityVector : body.getExtantVelocityVector(); // first collision processing or not
         var interPoint = getLinesIntersectPoint(body.getPos(), velocityVector, this.bottomRight, this.topRight);
-        rollback(d4, interPoint);
+        rollback(Math.abs(d4), interPoint);
 
         if (!info.processed)
         {
-            info.originalVelocityVector = velocityVector.clone();
+            if (info.originalVelocityVector == null)
+            {
+                info.originalVelocityVector = velocityVector.clone();
+            }
             velocityVector.scale(-1, 1);
         }
     }
