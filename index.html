@@ -69,6 +69,8 @@
 
             d3.select('#makeStep').on('click', function() 
             { 
+                d3.selectAll('.body_border').remove();
+
                 phys.step(); 
                 var stepNumber = phys.getStepNumber();
                 d3.select('#stepNumber').text('Step number: '+ stepNumber);
@@ -77,6 +79,8 @@
             var stepInterval = null;
             d3.select('#makeRun').on('click', function() 
             { 
+                d3.selectAll('.body_border').remove();
+
                 stepInterval = window.setInterval(function() 
                 { 
                     phys.step(); 
@@ -90,6 +94,17 @@
             d3.select('#makePause').on('click', function()
             {
                 clearInterval(stepInterval);
+                canvas.selectAll('.body_border.cat').data(cats).enter().insert('circle')
+                    .attr('cx', function(d) {return d.getPos().x; })
+                    .attr('cy', function(d) {return d.getPos().y; })
+                    .attr('r', function(d) {return d.getMass(); })
+                    .attr('class', 'body_border cat_border');
+
+                canvas.selectAll('.body_border.tapok').data(tapoks).enter().insert('circle')
+                    .attr('cx', function(d) {return d.getPos().x; })
+                    .attr('cy', function(d) {return d.getPos().y; })
+                    .attr('r', function(d) {return d.getMass(); })
+                    .attr('class', 'body_border tapok_border');
             })
 
             var canvas = wrapper.append('svg');

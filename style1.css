@@ -21,3 +21,10 @@
 {
     background-color: #ccc;
 }
+
+.body_border
+{
+    stroke: hsla(140, 60%, 30%, 0.7);
+    fill: hsla(140, 60%, 50%, 0.1);
+
+}
