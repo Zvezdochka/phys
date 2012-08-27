@@ -1,6 +1,7 @@
-var Body = function(phys, mass, pos)
+var Body = function(phys, id, mass, pos)
 {
     this.phys = phys;
+    this.id = id;
     this.mass = mass;
     this.pos = pos;
     this.prevPos = null;

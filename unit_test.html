@@ -17,55 +17,258 @@
     <script>
         var reductor = 1;
         
-        function init()
+        var environ =
+        {   
+            'reductor': 1,
+
+            'images':
+            {
+                0: {'url': '/img/green_crazy_cat.png'}, 
+                1: {'url': '/img/tapok.png', 'width': 60, 'height': 60}
+            },
+
+            'bodies':
+            {
+                0: {
+                    'id': 'cat',
+                    'mass': 60,
+                    'pos': {'x': 200, 'y': 200},
+                    'behaviours':
+                    {
+                        'attracts': [1, 2, 3],
+                        'collides': [1, 2, 3],
+                        'boundbox': true
+                    },
+                    'imageKey': 0
+                },
+
+                1: {
+                    'id': 'tapok-1',
+                    'mass': 30,
+                    'pos': {'x': 600, 'y': 100},
+                    'velocity': {'x': 25, 'y': 5},
+                    'behaviours': 
+                    {
+                        'attracts': [0, 2, 3],
+                        'collides': [0, 2, 3],
+                        'boundbox': true
+                    },
+                    'imageKey': 1
+                },
+
+                2: {
+                    'id': 'tapok-2',
+                    'mass': 30,
+                    'pos': {'x': 500, 'y': 500},
+                    'behaviours': 
+                    {
+                        'attracts': [0, 1, 3],
+                        'collides': [0, 1, 3],
+                        'boundbox': true
+                    },
+                    'imageKey': 1
+                },
+
+                3: {
+                    'id': 'tapok-3',
+                    'mass': 30,
+                    'pos': {'x': 150, 'y': 400},
+                    'behaviours': 
+                    {
+                        'attracts': [0, 1, 2],
+                        'collides': [0, 1, 2],
+                        'boundbox': true
+                    },
+                    'imageKey': 1
+                }
+            }
+
+        }
+
+        Object.prototype.each = function(callback) {
+            var i, key, value;
+            for (key in this)
+            {
+                if (this.hasOwnProperty(key))
+                {
+                    value = this[key];
+                    callback(value, key);
+                }
+            }
+        };
+
+        Object.prototype.toList = function() {
+            var list = [];
+            this.each(function(value) { list.push(value); });
+            return list;
+        };
+
+        function init(environ)
         {
-            var phys = new Phys();    
-
-            var cats = [phys.createBody(60, 200, 200),
-                         ];
-
-            var tapoks = [phys.createBody(30, 600, 100),
-                          phys.createBody(30, 500, 500),
-                          phys.createBody(30, 150, 400)];
-
-            tapoks[0].setExtantVelocityVector(phys.createVector(25, 5));
-
-            var attract = function(b1, b2)
-            {
-                var force = phys.createAttractionBehaviour(b1, b2);
-                b1.attachBehaviour(force);
-                b2.attachBehaviour(force);
-            }
-            
-            var collide = function(b1, b2)
-            {
-                var collision = phys.createCollisionBehaviour(b1, b2);
-                b1.attachBehaviour(collision);
-                b2.attachBehaviour(collision);
-            }
+            var phys = new Phys(); 
 
             var wrapper = d3.select('#canvas');
-            var boundBox = phys.createBoundBoxBehaviour(0, wrapper.node().clientHeight, wrapper.node().clientWidth, 0);
-            cats[0].attachBehaviour(boundBox);
-            tapoks[0].attachBehaviour(boundBox);
-            tapoks[1].attachBehaviour(boundBox);
-            tapoks[2].attachBehaviour(boundBox);
+            var width = wrapper.node().clientWidth;
+            var height = wrapper.node().clientHeight;
 
-            attract(cats[0], tapoks[0]);
-            attract(cats[0], tapoks[1]);
-            attract(cats[0], tapoks[2]);
+            var canvas = wrapper.append('svg');
+            canvas.attr('width', width)
+                  .attr('height', height);
 
-            collide(cats[0], tapoks[1]);
-            collide(cats[0], tapoks[2]);
-            collide(cats[0], tapoks[0]);
-            collide(tapoks[0], tapoks[1]);
-            collide(tapoks[1], tapoks[2]);
-            collide(tapoks[2], tapoks[0]);
+            var defs = canvas.append('defs');
 
-            phys.registerBody(cats[0]);
-            phys.registerBody(tapoks[0]);
-            phys.registerBody(tapoks[1]);
-            phys.registerBody(tapoks[2]);
+            canvas = canvas.append('g');
+            canvas.attr('transform', 'translate(0, '+ height +'),'+ 
+                                     'scale(1, -1)');
+            
+            /* Размеры холста для создания BoundboxBehaviour'а */
+            var box =
+            {
+                'topLeft': {'x': 0, 'y': height},
+                'bottomRight': {'x': width, 'y': 0}
+            }
+
+            /* Временный реестр объектов для воссоздания окружения */  
+            var registry = {'images': {}, 'bodies': {}, 'behaviours': {}};
+
+            reductor = environ.reductor;
+
+            /* Восстанавливаем изображения */            
+            environ.images.each(function(image, key) {
+                var node = new Image();
+                node = d3.select(node);
+
+                var width = ('width' in image ? image.width : null);
+                var height = ('height' in image ? image.height : null);
+
+                var filename = image.url.split('/').pop();
+                filename = filename.split('.');
+
+                var name = filename[0];
+                var ext = filename[1];
+
+                node.attr('src', image.url)
+                    .on('load', function() 
+                    {
+                         var canvas = document.createElement('canvas');
+                         canvas.width = this.width;
+                         canvas.height = this.height;
+
+                         var ctx = canvas.getContext('2d');
+                         ctx.drawImage(this, 0, 0);
+
+                         var data = canvas.toDataURL('image/' + ext);
+                         defs.append('image')
+                             .attr('id', name)
+                             .attr('xlink:href', data)
+                             .attr('width', width || this.width)
+                             .attr('height', height || this.height)
+                             .attr('transform', 'scale(1, -1)');
+                    });
+
+                registry.images[key] = name;
+            });
+
+            /* Воссоздаём тела */
+            environ.bodies.each(function(b, key)
+            {
+                var body = phys.createBody(b.id, b.mass, b.pos.x, b.pos.y);
+                phys.registerBody(body);
+
+                if ('velocity' in b)
+                {
+                    var velocity = b.velocity;
+                    velocity = phys.createVector(velocity.x, velocity.y);
+                    body.setExtantVelocityVector(velocity);
+                }
+
+                /* Сохраняем тело под его ключом в реестр для быстрого доступа, 
+                чтобы производить дополнительные операции */
+                registry.bodies[key] = body;
+                
+                var imageId = '#' + registry.images[b.imageKey];
+                var radius = body.getRadius();
+
+                var use = canvas.append('use');
+                use.attr('xlink:href', imageId)
+                   .attr('class', 'body')
+                   .attr('x', function(d) { return body.getPos().x - radius; })
+                   .attr('y', function(d) { return body.getPos().y + radius; })
+                   //.attr('r', function(d) { return d.getMass(); })
+                
+                body.onMoveBy(function()
+                {
+                    use.attr('x', body.getPos().x - radius)
+                       .attr('y', body.getPos().y + radius);
+                })
+            });
+
+            var behaviourCreators = 
+            {
+                'attracts': function(body1, body2)
+                {
+                    return phys.createAttractionBehaviour(body1, body2);
+                },
+
+                'collides': function(body1, body2)
+                {
+                    return phys.createCollisionBehaviour(body1, body2);
+                },
+
+                'boundbox': function()
+                {
+                    return phys.createBoundBoxBehaviour(box.topLeft.x, 
+                                                        box.topLeft.y,
+                                                        box.bottomRight.x,
+                                                        box.bottomRight.y)
+                }
+            }
+
+            /* Настраиваем behaviour'ы */
+            environ.bodies.each(function(bodyData, bodyKey)
+            {
+                bodyData.behaviours.each(function(bodyKeys, name) 
+                {
+                    if (name == 'boundbox')
+                    {
+                         var create = behaviourCreators[name];
+                         var body = registry.bodies[bodyKey];
+
+                         var behaviour = create();
+                         body.attachBehaviour(behaviour);
+
+                         return;
+                    }
+
+                    bodyKeys.forEach(function(anotherBodyKey) 
+                    {
+                        /* Выбираем ключи так, чтобы меньший всегда был первым */
+                        var key1 = bodyKey < anotherBodyKey ? bodyKey : anotherBodyKey;
+                        var key2 = bodyKey < anotherBodyKey ? anotherBodyKey : bodyKey;
+
+                        var behaviourKey = name + '-' + key1 + '-' + key2;
+                        if (behaviourKey in registry.behaviours)
+                        {
+                            /* Если behaviour для такой пары тел есть, значит 
+                            соответствующий объект уже был создан и настроен */
+                            return;
+                        }
+
+                        var body1 = registry.bodies[bodyKey];
+                        var body2 = registry.bodies[anotherBodyKey];
+
+                        var create = behaviourCreators[name];
+                        var behaviour = create(body1, body2);
+
+                        body1.attachBehaviour(behaviour);
+                        body2.attachBehaviour(behaviour);
+
+                        registry.behaviours[behaviourKey] = true;
+                    });
+                });
+            });
+
+            console.info(registry.behaviours);
 
             d3.select('#makeStep').on('click', function() 
             { 
@@ -92,106 +295,18 @@
             d3.select('#makePause').on('click', function()
             {
                 clearInterval(stepInterval);
-                canvas.selectAll('.body_border.cat').data(cats).enter().insert('circle')
-                    .attr('cx', function(d) {return d.getPos().x; })
-                    .attr('cy', function(d) {return d.getPos().y; })
-                    .attr('r', function(d) {return d.getMass(); })
-                    .attr('class', 'body_border cat_border');
-
-                canvas.selectAll('.body_border.tapok').data(tapoks).enter().insert('circle')
-                    .attr('cx', function(d) {return d.getPos().x; })
-                    .attr('cy', function(d) {return d.getPos().y; })
-                    .attr('r', function(d) {return d.getMass(); })
-                    .attr('class', 'body_border tapok_border');
+                canvas.selectAll('.body_border')
+                      .data(registry.bodies.toList())
+                      .enter()
+                          .insert('circle')
+                          .attr('cx', function(d) {return d.getPos().x; })
+                          .attr('cy', function(d) {return d.getPos().y; })
+                          .attr('r', function(d) {return d.getRadius(); })
+                          .attr('class', 'body_border');
             })
-
-            var canvas = wrapper.append('svg');
-            canvas.attr('width', wrapper.node().clientWidth)
-                  .attr('height', wrapper.node().clientHeight);
-
-            var images = [
-                '/img/green_crazy_cat.png', 
-                {'url': '/img/tapok.png', 'width': 60, 'height': 60}
-            ];
-            
-            var defs = canvas.append('defs');
-            images.forEach(function(url) {
-                img = new Image();
-                img = d3.select(img);
-
-                if (url instanceof Object)
-                {
-                    var width = url.width;
-                    var height = url.height;
-                    url = url.url;
-                }
-
-                var filename = url.split('/').pop();
-                filename = filename.split('.');
-
-                var name = filename[0];
-                var ext = filename[1];
-
-                img.attr('src', url)
-                   .on('load', function() 
-                   {
-                        var canvas = document.createElement('canvas');
-                        canvas.width = this.width;
-                        canvas.height = this.height;
-
-                        var ctx = canvas.getContext('2d');
-                        ctx.drawImage(this, 0, 0);
-
-                        var data = canvas.toDataURL('image/' + ext);
-                        defs.append('image')
-                            .attr('id', name)
-                            .attr('xlink:href', data)
-                            .attr('width', width || this.width)
-                            .attr('height', height || this.height)
-                            .attr('transform', 'scale(1, -1)');
-                   });
-
-            });
-
-            canvas = canvas.append('g').attr('transform', 'translate(0, '+ wrapper.node().clientHeight +'),'+ 
-                                                          'scale(1, -1)');
-
-            canvas.selectAll('.cat').data(cats).enter().append('use')
-                .attr('xlink:href', '#green_crazy_cat')
-                .attr('class', 'cat')
-                .attr('x', function(d) { return d.getPos().x-60;  })
-                .attr('y', function(d) { return d.getPos().y+60; })
-                /*.attr('r', function(d) { return d.getMass(); })*/
-                .each(function(body)
-                {
-                    var bodyNode = d3.select(this);
-                    body.onMoveBy(function(movement)
-                    {
-                        bodyNode
-                            .attr('x', body.getPos().x-60)
-                            .attr('y', body.getPos().y+60);
-                    })
-                });
-
-            canvas.selectAll('.tapok').data(tapoks).enter().append('use')
-                .attr('xlink:href', '#tapok')
-                .attr('class', 'tapok')
-                .attr('x', function(d) { return d.getPos().x-30;  })
-                .attr('y', function(d) { return d.getPos().y+30; })
-                /*.attr('r', function(d) { return d.getMass(); })*/
-                .each(function(body)
-                {
-                    var bodyNode = d3.select(this);
-                    body.onMoveBy(function(movement)
-                    {
-                        bodyNode
-                            .attr('x', body.getPos().x-30)
-                            .attr('y', body.getPos().y+30);
-                    })
-                });
-
         }
-        window.addEventListener('load', init, false);
+
+        window.addEventListener('load', function() { init(environ); }, false);
     </script>
 </head>
 

@@ -21,12 +21,12 @@
         {
             var phys = new Phys();    
 
-            var cats = [phys.createBody(60, 200, 200),
+            var cats = [phys.createBody('cat', 60, 200, 200),
                          ];
 
-            var tapoks = [phys.createBody(30, 600, 100),
-                          phys.createBody(30, 500, 500),
-                          phys.createBody(30, 150, 400)];
+            var tapoks = [phys.createBody('tapok-1', 30, 600, 100),
+                          phys.createBody('tapok-2', 30, 500, 500),
+                          phys.createBody('tapok-3', 30, 150, 400)];
 
             tapoks[0].setExtantVelocityVector(phys.createVector(25, 5));
 
