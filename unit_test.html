@@ -109,26 +109,55 @@
             canvas.attr('width', wrapper.node().clientWidth)
                   .attr('height', wrapper.node().clientHeight);
 
+            var images = [
+                '/img/green_crazy_cat.png', 
+                {'url': '/img/tapok.png', 'width': 60, 'height': 60}
+            ];
+            
             var defs = canvas.append('defs');
-            defs.append('image')
-                .attr('id', 'crazy_cat')
-                .attr('xlink:href', getCatImageData())
-                .attr('width', 120)
-                .attr('height', 120)
-                .attr('transform', 'scale(1, -1)');
+            images.forEach(function(url) {
+                img = new Image();
+                img = d3.select(img);
 
-            defs.append('image')
-                .attr('id', 'tapok')
-                .attr('xlink:href', getTapokImageData())
-                .attr('width', 60)
-                .attr('height', 60)
-                .attr('transform', 'scale(1, -1)');
+                if (url instanceof Object)
+                {
+                    var width = url.width;
+                    var height = url.height;
+                    url = url.url;
+                }
+
+                var filename = url.split('/').pop();
+                filename = filename.split('.');
+
+                var name = filename[0];
+                var ext = filename[1];
+
+                img.attr('src', url)
+                   .on('load', function() 
+                   {
+                        var canvas = document.createElement('canvas');
+                        canvas.width = this.width;
+                        canvas.height = this.height;
+
+                        var ctx = canvas.getContext('2d');
+                        ctx.drawImage(this, 0, 0);
+
+                        var data = canvas.toDataURL('image/' + ext);
+                        defs.append('image')
+                            .attr('id', name)
+                            .attr('xlink:href', data)
+                            .attr('width', width || this.width)
+                            .attr('height', height || this.height)
+                            .attr('transform', 'scale(1, -1)');
+                   });
+
+            });
 
             canvas = canvas.append('g').attr('transform', 'translate(0, '+ wrapper.node().clientHeight +'),'+ 
                                                           'scale(1, -1)');
 
             canvas.selectAll('.cat').data(cats).enter().append('use')
-                .attr('xlink:href', '#crazy_cat')
+                .attr('xlink:href', '#green_crazy_cat')
                 .attr('class', 'cat')
                 .attr('x', function(d) { return d.getPos().x-60;  })
                 .attr('y', function(d) { return d.getPos().y+60; })

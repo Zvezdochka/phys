@@ -102,7 +102,7 @@ CollisionBehaviour.prototype.postApply = function(body, flags)
         velocity2X = 0;
     };
 
-    if (overlap !=0) 
+    if (overlap != 0) 
     {
         flags.rollback_was = true;
     }
