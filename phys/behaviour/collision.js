@@ -22,15 +22,6 @@ CollisionBehaviour.prototype.postApply = function(body, flags)
         return;
     }
 
-    // get vector from body1 to body2
-    var pos1 = this.body1.getPos();
-    var pos2 = this.body2.getPos();
-
-    var vector1 = this.phys.createVector(pos1.x, pos1.y); // vector from 0,0 to body1
-    var vector2 = this.phys.createVector(pos2.x, pos2.y); // vector from 0,0 to body2
-
-    var deltaB2B1 = vector1.sub(vector2);            
-
     // check if collision was
     var r = this.body1.getDistanceTo(this.body2);
     var r1 = this.body1.getRadius();
@@ -44,8 +35,17 @@ CollisionBehaviour.prototype.postApply = function(body, flags)
     var m1 = this.body1.getMass();
     var m2 = this.body2.getMass();
 
+    // get vector from prev body1 pos to prev body2 pos (due to big overlap direction of central axis changes. that's why use prev pos-s )
+    var pos1 = this.body1.getPrevPos();
+    var pos2 = this.body2.getPrevPos();
+
+    var vector1 = this.phys.createVector(pos1.x, pos1.y); // vector from 0,0 to body1
+    var vector2 = this.phys.createVector(pos2.x, pos2.y); // vector from 0,0 to body2
+
+    var deltaB2B1 = vector1.sub(vector2);            
+
     // get unit vectors
-    var unitVectorX = deltaB2B1.clone().div(r);
+    var unitVectorX = deltaB2B1.clone().div(deltaB2B1.length());
     var unitVectorY = this.phys.createVector(-unitVectorX.y, unitVectorX.x);
     
     //Body 2
@@ -113,8 +113,8 @@ CollisionBehaviour.prototype.postApply = function(body, flags)
         var rollback2 = overlap * velocity2X / veloSum;
         console.info('rollback1', rollback1);
         console.info('rollback2', rollback2);
-        this.body1.moveBy(deltaB2B1.clone().mult(rollback1 / r), false);
-        this.body2.moveBy(deltaB2B1.clone().mult(-rollback2 / r), false);
+        this.body1.moveBy(deltaB2B1.clone().mult(rollback1 / deltaB2B1.length()), false);
+        this.body2.moveBy(deltaB2B1.clone().mult(-rollback2 / deltaB2B1.length()), false);
     }
 
     this.body1.setExtantVelocityVector(newVelocity1Vector);

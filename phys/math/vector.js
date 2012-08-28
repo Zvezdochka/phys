@@ -44,6 +44,11 @@ Vector.prototype.scale = function(scaleX, scaleY)
     return this;    
 }
 
+Vector.prototype.length = function()
+{
+    return Math.sqrt(this.x*this.x + this.y*this.y);
+}
+
 Vector.prototype.clone = function()
 {
     return new this.constructor(this.x, this.y);
