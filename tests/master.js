@@ -30,7 +30,7 @@ var environ =
             'velocity': {'x': 25, 'y': 5},
             'behaviours': 
             {
-                'attracts': [0, 2, 3],
+                'attracts': [0],
                 'collides': [0, 2, 3],
                 'boundbox': true
             },
@@ -43,7 +43,7 @@ var environ =
             'pos': {'x': 500, 'y': 500},
             'behaviours': 
             {
-                'attracts': [0, 1, 3],
+                'attracts': [0],
                 'collides': [0, 1, 3],
                 'boundbox': true
             },
@@ -56,7 +56,7 @@ var environ =
             'pos': {'x': 150, 'y': 400},
             'behaviours': 
             {
-                'attracts': [0, 1, 2],
+                'attracts': [0],
                 'collides': [0, 1, 2],
                 'boundbox': true
             },
