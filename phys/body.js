@@ -32,6 +32,11 @@ Body.prototype.getPrevPos = function()
     return this.prevPos;
 }
 
+Body.prototype.setPrevPos = function(pos)
+{
+    this.prevPos = pos.clone();
+}
+
 Body.prototype.onMoveBy = function(callback)
 {
     this.callbacks.onMoveBy = callback;
@@ -42,8 +47,9 @@ Body.prototype.moveBy = function(vector, updatePrevPos)
     updatePrevPos = updatePrevPos == undefined ? true : updatePrevPos;
     if (updatePrevPos)
     {
-        this.prevPos = this.pos.clone();
+        this.setPrevPos(this.pos);
     }
+    
     this.pos.x += vector.x;
     this.pos.y += vector.y;
     this.callbacks.onMoveBy(vector);

@@ -90,8 +90,15 @@ function init(environ)
         var body = phys.createBody(b.id, b.mass, b.pos.x, b.pos.y);
         phys.registerBody(body);
 
+        if ('prevPos' in b)
+        {   
+            var pos = b.prevPos;
+            pos = phys.createVector(pos.x, pos.y);
+            body.setPrevPos(pos);
+        }
+
         if ('velocity' in b)
-        {
+        {   
             var velocity = b.velocity;
             velocity = phys.createVector(velocity.x, velocity.y);
             body.setExtantVelocityVector(velocity);
