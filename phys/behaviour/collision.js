@@ -42,6 +42,10 @@ CollisionBehaviour.prototype.postApply = function(body, flags)
     var vector1 = this.phys.createVector(pos1.x, pos1.y); // vector from 0,0 to body1
     var vector2 = this.phys.createVector(pos2.x, pos2.y); // vector from 0,0 to body2
 
+    var origin = this.phys.createVector(0, 0);
+    this.phys.drawVector(origin, vector1);
+    this.phys.drawVector(origin, vector2);
+
     var deltaB2B1 = vector1.sub(vector2);            
 
     // get unit vectors

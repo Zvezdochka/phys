@@ -31,6 +31,15 @@ function init(environ)
           .attr('height', height);
 
     var defs = canvas.append('defs');
+    var marker = defs.append('marker');
+    marker.attr('id', 'arrow')
+          .attr('refX', 15)
+          .attr('refY', 5)
+          .attr('orient', 'auto')
+          .style('overflow', 'visible');
+
+    marker.append('path')
+          .attr('d', 'M 0 0 L 15 5 L 0 10 z');
 
     canvas = canvas.append('g');
     canvas.attr('transform', 'translate(0, '+ height +'),'+ 
@@ -226,4 +235,22 @@ function init(environ)
                   .attr('r', function(d) {return d.getRadius(); })
                   .attr('class', 'body_border');
     })
+
+    var debug = canvas.append('g');
+    debug.attr('id', 'debug');
+
+    phys.drawVector = function(pos, vector)
+    {
+        var vec = debug.append('line');
+        vec.attr('class', 'vector')
+           .attr('x1', pos.x)
+           .attr('y1', pos.y)
+           .attr('x2', vector.x)
+           .attr('y2', vector.y);
+    }
+
+    phys.clearDebugLayer = function()
+    {
+        d3.select('#debug *').remove();
+    }
 }
