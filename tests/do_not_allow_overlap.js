@@ -52,7 +52,7 @@ var environ =
             'behaviours': 
             {
                 'attracts': [0],
-                'collides': [1, 2, 3],
+                'collides': [0, 1, 3],
                 'boundbox': true
             },
             'imageKey': 1
