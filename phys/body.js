@@ -12,6 +12,11 @@ var Body = function(phys, id, mass, pos)
     this.serviceStorage = {};
 }
 
+Body.prototype.getId = function()
+{
+    return this.id;
+}
+
 Body.prototype.getMass = function()
 {
     return this.mass;

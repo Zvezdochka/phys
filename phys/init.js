@@ -121,8 +121,9 @@ function init(environ)
         var radius = body.getRadius();
 
         var use = canvas.append('use');
-        use.attr('xlink:href', imageId)
+        use.attr('id', body.getId())
            .attr('class', 'body')
+           .attr('xlink:href', imageId)
            .attr('x', function(d) { return body.getPos().x - radius; })
            .attr('y', function(d) { return body.getPos().y + radius; })
            //.attr('r', function(d) { return d.getMass(); })
