@@ -48,6 +48,7 @@ Phys.prototype.unregisterBody = function(body)
 Phys.prototype.step = function()
 {
     this.stepNumber++;
+
     this.clearDebugLayer();
 
     this.bodies.forEach(function(body)
