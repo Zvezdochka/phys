@@ -3,12 +3,12 @@ var CollisionBehaviour = function(phys, body1, body2)
     this.phys = phys;
     this.body1 = body1;
     this.body2 = body2;
-    this.processed = false;
+    this.processedCycle = null;
 };
 
 CollisionBehaviour.prototype.preApply = function(body)
 {
-    this.processed = false;
+    this.processedCycle = null;
 }
 
 CollisionBehaviour.prototype.apply = function(body)
@@ -17,7 +17,7 @@ CollisionBehaviour.prototype.apply = function(body)
 
 CollisionBehaviour.prototype.postApply = function(body, flags)
 {
-    if (this.processed) 
+    if (this.processedCycle == flags.cycleNumber) 
     { // if collision for pair of bodies was made
         return;
     }
@@ -122,5 +122,5 @@ CollisionBehaviour.prototype.postApply = function(body, flags)
         flags.rollback_was = (overlap != 0 ? true : flags.rollback_was);
     }
 
-    this.processed = true;
+    this.processedCycle = flags.cycleNumber;
 }

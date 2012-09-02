@@ -48,7 +48,6 @@ Phys.prototype.unregisterBody = function(body)
 Phys.prototype.step = function()
 {
     this.stepNumber++;
-
     this.clearDebugLayer();
 
     this.bodies.forEach(function(body)
@@ -73,7 +72,7 @@ Phys.prototype.step = function()
         body.moveBy(velocityVector);
     });
 
-    var flags = {'rollback_was': false};
+    var flags = {'rollback_was': false, 'cycleNumber': 0};
     // motion post processing (i.e. detecting collisions)
     do
     {
@@ -85,6 +84,7 @@ Phys.prototype.step = function()
                 behaviour.postApply(body, flags);
             });
         });    
+        flags.cycleNumber++;
     } while (flags.rollback_was);
 }
 
