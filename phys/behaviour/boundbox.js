@@ -42,75 +42,27 @@ BoundBoxBehaviour.prototype.postApply = function(body, flags)
     {
 console.info('getLinesIntersectPoint', point.toString(), velocityVector.toString(), linePoint1, linePoint2);        
         // intersection point of line (linePoint1, linePoint2) and perpendicular going through point)
-        x0 = linePoint1.x;
-        y0 = linePoint1.y;
-        x1 = linePoint2.x;
-        y1 = linePoint2.y;
+        var x0 = linePoint1.x;
+        var y0 = linePoint1.y;
+        var x1 = linePoint2.x;
+        var y1 = linePoint2.y;
         
-        var xInter, yInter;
-
         if (x0 == x1) 
         {
-            var prevX = body.getPrevPos().x;
-            if ((velocityVector.x < 0) && (prevX > linePoint1.x)) 
-            {
-                // to the left inside
-                xInter = linePoint1.x;
-            } 
-            else if ((velocityVector.x < 0) && (prevX > linePoint2.x)) 
-            {
-                // to the left outside
-                xInter = linePoint2.x;
-            } 
-            else if ((velocityVector.x > 0) && (prevX < linePoint1.x)) 
-            {
-                // to the right outside
-                xInter = linePoint1.x;
-            } 
-            else if ((velocityVector.x > 0) && (prevX < linePoint2.x)) 
-            {
-                // to the right inside
-                xInter = linePoint2.x;
-            }
-            yInter = point.y;
-
-            return that.phys.createVector(xInter, yInter);
+            return that.phys.createVector(x0, point.y);
         }
         var kLine = (y1 - y0) / (x0 - x1);
         var bLine = (x1 * y0 - x0 * y1) / (x0 - x1);
 
         if (y1 == y0) 
         {
-            var prevY = body.getPrevPos().y;
-            if ((velocityVector.y < 0) && (prevY > linePoint1.y)) 
-            {
-                // to the top outside
-                yInter = linePoint1.y;
-            } 
-            else if ((velocityVector.y < 0) && (prevY > linePoint2.y)) 
-            {
-                // to the bottom inside
-                yInter = linePoint2.y;
-            } 
-            else if ((velocityVector.y > 0) && (prevY < linePoint1.y)) 
-            {
-                // to the top inside
-                yInter = linePoint1.y;
-            } 
-            else if ((velocityVector.y > 0) && (prevY < linePoint2.y)) 
-            {
-                // to the bottom outside
-                yInter = linePoint2.y;
-            }
-            xInter = point.x;
-
-            return that.phys.createVector(xInter, yInter);
+            return that.phys.createVector(point.x, y0);
         }
         var kPerp = (x1 - x0) / (y1 - y0);
         var bPerp = point.y - (x0 - x1) / (y1 - y0) * point.x;
         
-        xInter = (bPerp - bLine) / (kLine - kPerp);
-        yInter = kPerp * xInter + bPerp;
+        var xInter = (bPerp - bLine) / (kLine - kPerp);
+        var yInter = kPerp * xInter + bPerp;
 
         return that.phys.createVector(xInter, yInter);
     }
