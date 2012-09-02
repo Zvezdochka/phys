@@ -64,7 +64,7 @@ Body.prototype.getDistanceTo = function(target)
 {
     dx = this.pos.x - target.getPos().x;
     dy = this.pos.y - target.getPos().y;
-    return Math.sqrt(dx * dx + dy * dy);
+    return Math.round(Math.sqrt(dx * dx + dy * dy), 3);
 }
 
 Body.prototype.attachBehaviour = function(behaviour)
