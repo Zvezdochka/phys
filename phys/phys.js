@@ -48,10 +48,6 @@ Phys.prototype.unregisterBody = function(body)
 Phys.prototype.step = function()
 {
     this.stepNumber++;
-if (this.stepNumber == 2400)
-{
-    return true;
-}
     this.clearDebugLayer();
 
     this.bodies.forEach(function(body)
