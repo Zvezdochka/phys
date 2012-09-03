@@ -52,62 +52,74 @@ CollisionBehaviour.prototype.postApply = function(body, flags)
     var m1 = this.body1.getMass();
     var m2 = this.body2.getMass();
 
-    // get unit vectors
-    var unitVectorX = B2B1Axis.clone().div(B2B1Axis.length());
-    var unitVectorY = this.phys.createVector(-unitVectorX.y, unitVectorX.x);
+
+    // velocity exchange (if original velocity vector is not changed)
+    if (this.processedCycle == null)
+    {
+        // get unit vectors
+        var unitVectorX = B2B1Axis.clone().div(B2B1Axis.length());
+        var unitVectorY = this.phys.createVector(-unitVectorX.y, unitVectorX.x);
+        
+        //Body 2 : decomposing velocity vector to components along unit vectors (unit vectors are basis)
+        var velocity2Vector = this.body2.getExtantVelocityVector();
+        var velocity2X = unitVectorX.dotProduct(velocity2Vector); //x-component of velocity of body2
+        var velocity2Y = unitVectorY.dotProduct(velocity2Vector); //y-component of velocity of body2
+        
+        //Body 1
+        var velocity1Vector = this.body1.getExtantVelocityVector();
+        var velocity1X = unitVectorX.dotProduct(velocity1Vector); //x-component of velocity of body1
+        var velocity1Y = unitVectorY.dotProduct(velocity1Vector); //y-component of velocity of body1
+
+        //Body 2
+        //x-component of velocity of body2 after collision
+        var newVelocity2X = (2 * m1 * velocity1X + (m2 - m1) * velocity2X) / (m1 + m2);
+
+        // making vectors from x,y-components
+        var newVelocity2VectorX = unitVectorX.clone().mult(newVelocity2X);
+        var velocity2VectorY = unitVectorY.clone().mult(velocity2Y);
+        var newVelocity2Vector = newVelocity2VectorX.clone().add(velocity2VectorY);
+        
+        this.body2.setExtantVelocityVector(newVelocity2Vector);
+
+        //Body 1
+        //x-component of velocity of body1 after collision
+        var newVelocity1X = (2 * m2 * velocity2X + (m1 - m2) * velocity1X) / (m1 + m2);
+
+        // making vectors from x,y-components
+        var newVelocity1VectorX = unitVectorX.clone().mult(newVelocity1X);
+        var velocity1VectorY = unitVectorY.clone().mult(velocity1Y);
+        var newVelocity1Vector = newVelocity1VectorX.clone().add(velocity1VectorY);
+
+        this.body1.setExtantVelocityVector(newVelocity1Vector);
+
+        //correction location
+        var veloSum = 0;
+        if (velocity1X * sign < 0) 
+        {
+            velocity1X = Math.abs(velocity1X);
+            veloSum += velocity1X;
+        } else 
+        {
+            velocity1X = 0;
+        };
+
+        if (velocity2X * sign > 0) 
+        {
+            velocity2X = Math.abs(velocity2X);
+            veloSum += velocity2X;
+        } else 
+        {
+            velocity2X = 0;
+        };
+
+    } else
+    {
+        //correction location
+        var veloSum = 1;
+        var velocity1X = 0.5;
+        var velocity2X = 0.5;
+    }
     
-    //Body 2 : decomposing velocity vector to components along unit vectors (unit vectors are basis)
-    var velocity2Vector = this.body2.getExtantVelocityVector();
-    var velocity2X = unitVectorX.dotProduct(velocity2Vector); //x-component of velocity of body2
-    var velocity2Y = unitVectorY.dotProduct(velocity2Vector); //y-component of velocity of body2
-    
-    //Body 1
-    var velocity1Vector = this.body1.getExtantVelocityVector();
-    var velocity1X = unitVectorX.dotProduct(velocity1Vector); //x-component of velocity of body1
-    var velocity1Y = unitVectorY.dotProduct(velocity1Vector); //y-component of velocity of body1
-
-    //Body 2
-    //x-component of velocity of body2 after collision
-    var newVelocity2X = (2 * m1 * velocity1X + (m2 - m1) * velocity2X) / (m1 + m2);
-
-    // making vectors from x,y-components
-    var newVelocity2VectorX = unitVectorX.clone().mult(newVelocity2X);
-    var velocity2VectorY = unitVectorY.clone().mult(velocity2Y);
-    var newVelocity2Vector = newVelocity2VectorX.clone().add(velocity2VectorY);
-    
-    this.body2.setExtantVelocityVector(newVelocity2Vector);
-
-    //Body 1
-    //x-component of velocity of body1 after collision
-    var newVelocity1X = (2 * m2 * velocity2X + (m1 - m2) * velocity1X) / (m1 + m2);
-
-    // making vectors from x,y-components
-    var newVelocity1VectorX = unitVectorX.clone().mult(newVelocity1X);
-    var velocity1VectorY = unitVectorY.clone().mult(velocity1Y);
-    var newVelocity1Vector = newVelocity1VectorX.clone().add(velocity1VectorY);
-
-    this.body1.setExtantVelocityVector(newVelocity1Vector);
-
-    //correction location
-    var veloSum = 0;
-    if (velocity1X * sign < 0) 
-    {
-        velocity1X = Math.abs(velocity1X);
-        veloSum += velocity1X;
-    } else 
-    {
-        velocity1X = 0;
-    };
-
-    if (velocity2X * sign > 0) 
-    {
-        velocity2X = Math.abs(velocity2X);
-        veloSum += velocity2X;
-    } else 
-    {
-        velocity2X = 0;
-    };
-
     if (veloSum > 0)
     {
         var rollback1 = sign * overlap * velocity1X / veloSum;
