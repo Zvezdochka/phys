@@ -200,7 +200,7 @@ function init(environ)
         });
     });
 
-    console.info(registry.behaviours);
+    //console.info(registry.behaviours);
 
     d3.select('#makeStep').on('click', function() 
     { 

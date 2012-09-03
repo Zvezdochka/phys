@@ -40,7 +40,7 @@ BoundBoxBehaviour.prototype.postApply = function(body, flags)
 
     function getLinesIntersectPoint(point, velocityVector, linePoint1, linePoint2)
     {
-console.info('getLinesIntersectPoint', point.toString(), velocityVector.toString(), linePoint1, linePoint2);        
+        //console.info('getLinesIntersectPoint', point.toString(), velocityVector.toString(), linePoint1, linePoint2);        
         // intersection point of line (linePoint1, linePoint2) and perpendicular going through point)
         var x0 = linePoint1.x;
         var y0 = linePoint1.y;
@@ -69,7 +69,7 @@ console.info('getLinesIntersectPoint', point.toString(), velocityVector.toString
 
     function rollback(distance, interPoint)
     {
-        console.info('distance', distance, 'body', body);
+        //console.info('distance', distance, 'body', body);
         var sign = (sign = body.getPrevPos().clone().sub(interPoint)
                     .dotProduct(body.getPos().clone().sub(interPoint)), 
                     sign / Math.abs(sign));
@@ -81,7 +81,8 @@ console.info('getLinesIntersectPoint', point.toString(), velocityVector.toString
         var perpVector = body.getPos().clone().sub(interPoint);
         var perpUnitVector = perpVector.clone().div(distance);
         var correctionVector = perpUnitVector.clone().mult(overlap);
-        console.info('correctionVector', correctionVector);
+        
+        //console.info('correctionVector', correctionVector);
         body.moveBy(correctionVector, false);
     }
 
@@ -108,7 +109,7 @@ console.info('getLinesIntersectPoint', point.toString(), velocityVector.toString
         // collision was with top wall
         var velocityVector = info.processed ? info.originalVelocityVector : body.getExtantVelocityVector(); // first collision processing or not
         var interPoint = getLinesIntersectPoint(body.getPos(), velocityVector, this.topLeft, this.topRight);
-        rollback(Math.abs(d1), interPoint);
+        rollback(Math.abs(d1), interPoint); 
 
         if (!info.processed)
         {
