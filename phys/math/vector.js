@@ -49,6 +49,12 @@ Vector.prototype.length = function()
     return Math.sqrt(this.x*this.x + this.y*this.y).toFixed(3);
 }
 
+Vector.prototype.normalize = function()
+{
+    this.div(this.length());
+    return this;
+}
+
 Vector.prototype.clone = function()
 {
     return new this.constructor(this.x, this.y);

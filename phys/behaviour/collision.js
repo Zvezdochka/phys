@@ -41,9 +41,17 @@ CollisionBehaviour.prototype.postApply = function(body, flags)
     var prevPos2 = this.body2.getPrevPos(); // vector from 0,0 to prev pos body2 
 
     var B2B1Axis = pos1.clone().sub(pos2);            
-    var prevB2B1Axis = prevPos1.clone().sub(prevPos2);            
-    var axisAngleCos = B2B1Axis.dotProduct(prevB2B1Axis) / (B2B1Axis.length() * prevB2B1Axis.length());
+    var prevB2B1Axis = prevPos1.clone().sub(prevPos2); 
 
+    /* Fallback на случай, когда два тела встали на одну и ту же позицию (или 
+    приблизительно в одну и ту же позицию, но просто не хватает точности), 
+    из-за чего появляется Infinity в axisAngleCos и NaN'ы в новых векторах */
+    if (B2B1Axis.length() == 0)
+    {
+        B2B1Axis = prevB2B1Axis.clone().normalize();
+    }
+
+    var axisAngleCos = B2B1Axis.dotProduct(prevB2B1Axis) / (B2B1Axis.length() * prevB2B1Axis.length());
     // if cos is less than zero, bodies swaped its' positions (during collision) 
     // in projection on central axis
     var sign = (axisAngleCos < 0 ? -1 : 1);
@@ -120,7 +128,13 @@ CollisionBehaviour.prototype.postApply = function(body, flags)
     }
     
     if (veloSum > 0)
-    {
+    {   
+        /* Чтобы ускорить разрешение мелких пересечений при мультиколлизиях 
+        (например со стенкой и другим телом), когда тело корректируется 
+        туда-сюда по чуть-чуть, пока не будет найдено решение. Это округление 
+        отсекает обработку совсем уж мелких пересечений. */
+        overlap = overlap.toFixed(2);
+
         var rollback1 = sign * overlap * velocity1X / veloSum;
         var rollback2 = sign * overlap * velocity2X / veloSum;
         

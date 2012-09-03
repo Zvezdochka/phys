@@ -118,7 +118,8 @@ BoundBoxBehaviour.prototype.postApply = function(body, flags)
         {
             velocityVector.scale(1, -1);
         }
-    } 
+    }
+
     if ((Math.abs(d2) <= body.getRadius()) || (d2 * prevd2 < 0))
     {
         // collision was with bottom wall
@@ -130,7 +131,8 @@ BoundBoxBehaviour.prototype.postApply = function(body, flags)
         {
             velocityVector.scale(1, -1);
         }
-    } 
+    }
+
     if ((Math.abs(d3) <= body.getRadius()) || (d3 * prevd3 < 0))
     {
         // collision was with left wall
@@ -142,7 +144,8 @@ BoundBoxBehaviour.prototype.postApply = function(body, flags)
         {
             velocityVector.scale(-1, 1);
         }
-    } 
+    }
+
     if ((Math.abs(d4) <= body.getRadius()) || (d4 * prevd4 < 0))
     {
         // collision was with right wall
