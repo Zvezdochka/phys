@@ -52,7 +52,6 @@ CollisionBehaviour.prototype.postApply = function(body, flags)
     var m1 = this.body1.getMass();
     var m2 = this.body2.getMass();
 
-
     // velocity exchange (if original velocity vector is not changed)
     if (this.processedCycle == null)
     {

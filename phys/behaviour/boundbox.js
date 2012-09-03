@@ -86,6 +86,13 @@ console.info('getLinesIntersectPoint', point.toString(), velocityVector.toString
     }
 
     var info = body.serviceStorage.boundBox;
+    if (!info.processed)
+    {
+        if (info.originalVelocityVector == null)
+        {
+            info.originalVelocityVector = body.getExtantVelocityVector().clone();
+        }
+    }
 
     var d1 = pointToLineDistance(body.getPos(), this.topLeft, this.topRight);
     var d2 = pointToLineDistance(body.getPos(), this.bottomLeft, this.bottomRight);
@@ -105,10 +112,6 @@ console.info('getLinesIntersectPoint', point.toString(), velocityVector.toString
 
         if (!info.processed)
         {
-            if (info.originalVelocityVector == null)
-            {
-                info.originalVelocityVector = velocityVector.clone();
-            }
             velocityVector.scale(1, -1);
         }
     } 
@@ -121,10 +124,6 @@ console.info('getLinesIntersectPoint', point.toString(), velocityVector.toString
 
         if (!info.processed)
         {
-            if (info.originalVelocityVector == null)
-            {
-                info.originalVelocityVector = velocityVector.clone();
-            }
             velocityVector.scale(1, -1);
         }
     } 
@@ -137,10 +136,6 @@ console.info('getLinesIntersectPoint', point.toString(), velocityVector.toString
 
         if (!info.processed)
         {
-            if (info.originalVelocityVector == null)
-            {
-                info.originalVelocityVector = velocityVector.clone();
-            }
             velocityVector.scale(-1, 1);
         }
     } 
@@ -153,14 +148,9 @@ console.info('getLinesIntersectPoint', point.toString(), velocityVector.toString
 
         if (!info.processed)
         {
-            if (info.originalVelocityVector == null)
-            {
-                info.originalVelocityVector = velocityVector.clone();
-            }
             velocityVector.scale(-1, 1);
         }
     }
 
     info.processed = true;
- 
 }
