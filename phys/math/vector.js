@@ -46,7 +46,7 @@ Vector.prototype.scale = function(scaleX, scaleY)
 
 Vector.prototype.length = function()
 {
-    return Math.round(Math.sqrt(this.x*this.x + this.y*this.y), 3);
+    return Math.sqrt(this.x*this.x + this.y*this.y).toFixed(3);
 }
 
 Vector.prototype.clone = function()

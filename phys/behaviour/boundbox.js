@@ -35,7 +35,7 @@ BoundBoxBehaviour.prototype.postApply = function(body, flags)
         /* d = Ax+By+C / sqrt(A^2 + B^2)*/
         var d = (y0 - y1) * point.x + (x1 - x0) * point.y + (x0 * y1 - y0 * x1);
         d /= Math.sqrt(Math.pow((y0 - y1), 2) + Math.pow((x1 - x0), 2)); 
-        return d;
+        return d.toFixed(3);
     }
 
     function getLinesIntersectPoint(point, velocityVector, linePoint1, linePoint2)
@@ -78,6 +78,9 @@ BoundBoxBehaviour.prototype.postApply = function(body, flags)
         { 
             flags.rollback_was = true;
         }
+
+        /* Защита от деления вектора perpVector на 0 */
+        distance = (distance != 0 ? distance : 1);
         var perpVector = body.getPos().clone().sub(interPoint);
         var perpUnitVector = perpVector.clone().div(distance);
         var correctionVector = perpUnitVector.clone().mult(overlap);
