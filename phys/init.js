@@ -128,7 +128,7 @@ function init(environ)
            .attr('y', function(d) { return body.getPos().y + radius; })
            //.attr('r', function(d) { return d.getMass(); })
         
-        body.onMoveBy(function()
+        body.on('moveBy', function(vector, pos) 
         {
             use.attr('x', body.getPos().x - radius)
                .attr('y', body.getPos().y + radius);
@@ -152,8 +152,13 @@ function init(environ)
             return phys.createBoundBoxBehaviour(box.topLeft.x, 
                                                 box.topLeft.y,
                                                 box.bottomRight.x,
-                                                box.bottomRight.y)
-        }
+                                                box.bottomRight.y);
+        },
+
+        'joint': function(body1, body2)
+        {
+            return phys.createJointBehaviour(body1, body2);
+        } 
     }
 
     /* Настраиваем behaviour'ы */

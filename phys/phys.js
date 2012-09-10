@@ -34,6 +34,11 @@ Phys.prototype.createBoundBoxBehaviour = function(x1, y1, x2, y2)
     return new BoundBoxBehaviour(this, x1, y1, x2, y2);
 }
 
+Phys.prototype.createJointBehaviour = function(body1, body2)
+{
+    return new JointBehaviour(this, body1, body2);
+}
+
 Phys.prototype.registerBody = function(body)
 {
     this.bodies.push(body);
@@ -65,9 +70,11 @@ Phys.prototype.step = function()
         body.iterateBehaviours(function(behaviour)
         {
             behaviour.apply(body);
-
         });
-        
+    });
+
+    this.bodies.forEach(function(body)
+    {
         var velocityVector = body.getVelocityVector();
         body.moveBy(velocityVector);
     });

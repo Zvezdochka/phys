@@ -7,7 +7,7 @@ var Body = function(phys, id, mass, pos)
     this.prevPos = null;
     this.behaviours = [];
     this.compoundVector = phys.createVector(0, 0);
-    this.callbacks = {'onMoveBy': null};
+    this.callbacks = {'moveBy': [], 'getVelocityVector': []};
     this.extantVelocityVector = phys.createVector(0, 0);
     this.serviceStorage = {};
 }
@@ -42,9 +42,17 @@ Body.prototype.setPrevPos = function(pos)
     this.prevPos = pos.clone();
 }
 
-Body.prototype.onMoveBy = function(callback)
+Body.prototype.on = function(eventName, callback)
 {
-    this.callbacks.onMoveBy = callback;
+    this.callbacks[eventName].push(callback);
+}
+
+Body.prototype.callEventHandlers = function(eventName, argumentsArray)
+{
+    this.callbacks[eventName].forEach(function(handler)
+    {
+        handler.apply(window, argumentsArray)
+    });
 }
 
 Body.prototype.moveBy = function(vector, updatePrevPos)
@@ -57,7 +65,7 @@ Body.prototype.moveBy = function(vector, updatePrevPos)
     
     this.pos.x += vector.x;
     this.pos.y += vector.y;
-    this.callbacks.onMoveBy(vector);
+    this.callEventHandlers('moveBy', [vector]);
 }
 
 Body.prototype.getDistanceTo = function(target)
@@ -89,6 +97,7 @@ Body.prototype.resetForceVectors = function()
 
 Body.prototype.getVelocityVector = function()
 {
+    this.callEventHandlers('getVelocityVector');
     // instantaneous velocity = extant velocity * reductor + obtained velocity
     var obtainedVelocityVector = this.compoundVector.clone().div(this.mass); // obtained velocity = accelerationVector * step time = accelerationVector
     var instantVelocity = this.extantVelocityVector
